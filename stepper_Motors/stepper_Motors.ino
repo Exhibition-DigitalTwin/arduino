@@ -30,10 +30,9 @@ void loop() {
   if (incomingByte == 49) {
     Serial.println("turning cabin angle");
     while (previousStepsCabin < stepperCabinSteps) {
-      int doSteps = stepperCabinSteps - previousStepsCabin;
       previousStepsCabin++;
-      stepperCabin.step(1);
-      stepperRotorBlades.step(1);
+      stepperCabin.step(stepperCabinSteps/stepperRotorBladesSteps);
+      stepperRotorBlades.step(stepperRotorBladesSteps/stepperCabinSteps);
     }
     previousStepsCabin = 0;
     delay(10);
