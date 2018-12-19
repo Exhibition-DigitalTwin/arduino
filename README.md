@@ -1,7 +1,8 @@
 # Arduino code for the digital twin exhibit
 
-## installation
-Open the code on the Arduino.
+## libraries
+Stepper.h (built-in)
+FastLED by Daniel Garcia
 
 ## start
 Deploy the code on the Arduino.
