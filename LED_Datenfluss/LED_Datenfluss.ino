@@ -2,21 +2,11 @@
 
 FASTLED_USING_NAMESPACE
 
-// FastLED "100-lines-of-code" demo reel, showing just a few 
-// of the kinds of animation patterns you can quickly and easily 
-// compose using FastLED.  
-//
-// This example also shows one easy way to define multiple 
-// animations patterns and have them automatically rotate.
-//
-// -Mark Kriegsman, December 2014
-
 #if defined(FASTLED_VERSION) && (FASTLED_VERSION < 3001000)
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
 #define DATA_PIN    9
-//#define CLK_PIN   4
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
 #define NUM_LEDS    60
@@ -37,28 +27,42 @@ void setup() {
 }
 
 
-// List of patterns to cycle through.  Each is defined as a separate function below.
+/*// List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
 SimplePatternList gPatterns = { rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm };
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
+*/
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
+
   
 void loop()
 {
   // Call the current pattern function once, updating the 'leds' array
-  gPatterns[gCurrentPatternNumber]();
+ // gPatterns[gCurrentPatternNumber]();
 
-  // send the 'leds' array out to the actual LED strip
+ // send the 'leds' array out to the actual LED strip
   FastLED.show();  
   // insert a delay to keep the framerate modest
-  FastLED.delay(1000/FRAMES_PER_SECOND); 
+  FastLED.delay(3000/FRAMES_PER_SECOND); 
 
   // do some periodic updates
-  EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
-  EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
+  EVERY_N_MILLISECONDS( 700 ) { gHue++; } // slowly cycle the "base color" through the rainbow
+ // EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
+  
+
+
+ fadeToBlackBy( leds, NUM_LEDS, 20);
+  int pos = beatsin16( 13, 0, NUM_LEDS-1 );
+  leds[pos] += CHSV( 255, 255, 192);
 }
 
+
+
+
+  
+
+/*
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 void nextPattern()
@@ -122,5 +126,5 @@ void juggle() {
     leds[beatsin16( i+7, 0, NUM_LEDS-1 )] |= CHSV(dothue, 200, 255);
     dothue += 32;
   }
-}
+}*/
 
