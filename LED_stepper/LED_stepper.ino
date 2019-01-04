@@ -14,18 +14,21 @@ CRGB leds[NUM_LEDS];
 #define BRIGHTNESS          96
 #define FRAMES_PER_SECOND  120
 int previousLEDrun = false;
+int currentLED = 0;
 
 // stepper motors
 int incomingByte = 0;
-int previousStepsCabin = 0;
+int previousStepsCabin = 500;
 const int stepperRotorBladesSteps = 500;  // change this to fit the number of steps per revolution for your motor
-const int stepperCabinSteps = 500;
+const int stepperCabinSteps = -500;
 Stepper stepperCabin(stepperCabinSteps, 8, 10, 9, 11);
 Stepper stepperRotorBlades(stepperRotorBladesSteps, 4, 6, 5, 7);
 
 // general
 int currentStatusAngle = false; // false standing still, true turning
 int currentStatusLEDs = 0; // 0 off, -1 down, 1 up
+unsigned long previousMillis = 0;
+const long interval = 30;
 
 void setup() {
   delay(3000); // 3 second delay for recovery
@@ -38,6 +41,7 @@ void setup() {
 
 void loop()
 {
+  unsigned long currentMillis = millis();
   if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.read();
@@ -56,28 +60,33 @@ void loop()
 
   // check if status still valid
   if (previousStepsCabin >= stepperCabinSteps) {
-    previousStepsCabin = 0;
+    previousStepsCabin = 500;
     currentStatusAngle = false;
   }
-  if (!previousLEDrun) {
+  if (currentLED >= NUM_LEDS) {
     currentStatusLEDs = 0;
+    currentLED = 0;
+    previousLEDrun = true;
   }
 
   // turning or not
   if (currentStatusAngle) {
     stepperCabin.step(stepperCabinSteps / stepperRotorBladesSteps);
     stepperRotorBlades.step(stepperRotorBladesSteps / stepperCabinSteps);
-    previousStepsCabin++;
+    previousStepsCabin--;
   } else {
     stepperRotorBlades.step(stepperRotorBladesSteps);
     previousStepsCabin = 0;
   }
-  if (previousLEDrun && currentStatusLEDs == 1 || currentStatusLEDs == -1) {
-    fadeToBlackBy(leds, NUM_LEDS, 10);
-    int pos = beatsin16(13, 0, NUM_LEDS );
-    leds[pos] += CHSV(255, 255, 192);
+  // LEDs moving or not
+  if (previousLEDrun && currentMillis - previousMillis >= interval) {
+    int op = currentMillis - previousMillis;
+    Serial.print(">"+currentLED);
+    previousMillis = currentMillis;
+    leds[2] = CRGB::Blue;
     FastLED.show();
-    FastLED.delay(100 / FRAMES_PER_SECOND);
-    previousLEDrun = false;
+    // clear this led for the next time around the loop
+    leds[1] = CRGB::Black;
+    currentLED++;
   }
 }
