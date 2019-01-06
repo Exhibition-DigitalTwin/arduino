@@ -15,13 +15,13 @@ Adafruit Huzzah ESP 32
 top:
 <br>
 <br>
-<img src="https://github.com/Exhibition-DigitalTwin/arduino/img/Schaltung-01.svg">
+<img src="https://github.com/Exhibition-DigitalTwin/arduino/blob/master/img/Schaltung-01.svg">
 <br>
 <br>
 bottom:
 <br>
 <br>
-<img src="https://github.com/Exhibition-DigitalTwin/arduino/img/Schaltung-02.svg">
+<img src="https://github.com/Exhibition-DigitalTwin/arduino/blob/master/img/Schaltung-02.svg">
 <br>
 <br>
 
