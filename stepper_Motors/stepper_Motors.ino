@@ -20,10 +20,10 @@ int currentLED = 0;
 // stepper motors
 int incomingByte = 0;
 int cabinSteps = 0;
-const int stepPinRotor = 32; 
-const int dirPinRotor = 33;
-const int stepPinCabin = 14; 
-const int dirPinCabin = 15;  
+const int stepPinRotor = 2; 
+const int dirPinRotor = 3;
+const int stepPinCabin = 4; 
+const int dirPinCabin = 5;  
 
 // general
 int rotateCabin = false; // false standing still, true turning
@@ -51,20 +51,18 @@ void loop()
   if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.read();
-
-    // say what you got:
-    Serial.print("I received: ");
-    Serial.println(incomingByte, DEC);
   }
   if (incomingByte == 49) {
     rotateCabin = true;
   }
-  /*
+  else if (incomingByte != 49) {
+  }
+/*
   else if (incomingByte == 50) {
     currentStatusLEDs = 1;
     previousLEDrun = true;
   }
-
+ 
   if (currentLED >= NUM_LEDS) {
     currentStatusLEDs = 0;
     currentLED = 0;
@@ -72,7 +70,7 @@ void loop()
   }
 */
   // turning or not
-  if (rotateCabin == true && cabinSteps <= 800) {
+  if (rotateCabin == true && cabinSteps <= 3000) {
     cabinStep();
     cabinSteps ++;
     rotorStep();
