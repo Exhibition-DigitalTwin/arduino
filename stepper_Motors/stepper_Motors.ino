@@ -31,9 +31,14 @@ int rotateCabin = false; // false standing still, true turning
 int currentStatusLEDs = 0; // 0 off, -1 down, 1 up
 unsigned long previousMillis = 0;
 unsigned long previousMillis2 = 0;
+unsigned long previousMillisStepRotor = 0;
+unsigned long previousMillisStepCabin = 0;
 const long interval = 100;
+const long interval500 = 1;
 int showLEDVorne = false;
 int showLEDHinten = false;
+int stepHighRotor = false;
+int stepHighCabin = false;
 
 
 void setup() {
@@ -51,45 +56,6 @@ void setup() {
   digitalWrite(dirPinCabin, HIGH);
 }
 
-
-/* turning or not
-  if (rotateCabin == true && cabinSteps <= 3000) {
-  cabinStep();
-  cabinSteps ++;
-  rotorStep();
-  } else {
-  rotorStep();
-  rotateCabin = false;
-  cabinSteps = 0;
-  }*/
-
-//LEDs moving or not
-/*if (previousLEDrun && currentMillis - previousMillis >= interval) {
-  int op = currentMillis - previousMillis;
-  Serial.print(">"+currentLED);
-  previousMillis = currentMillis;
-  leds[2] = CRGB::Blue;
-  FastLED.show();
-  // clear this led for the next time around the loop
-  leds[1] = CRGB::Black;
-  currentLED++;
-  }*/
-
-
-
-void rotorStep() {
-  digitalWrite(stepPinRotor, HIGH);
-  delayMicroseconds(500);
-  digitalWrite(stepPinRotor, LOW);
-  delayMicroseconds(500);
-}
-
-void cabinStep() {
-  digitalWrite(stepPinCabin, HIGH);
-  delayMicroseconds(500);
-  digitalWrite(stepPinCabin, LOW);
-  delayMicroseconds(500);
-}
 
 void loop()
 {
@@ -121,14 +87,6 @@ void loop()
 
 
   if (showLEDVorne == true && currentLED <= NUM_LEDS && currentMillis - previousMillis >= interval) {
-    //previousLEDrun = true;
-    //currentStatusLEDs = 2;
-
-    //Serial.print(incomingByte);
-    // FastLED.show();
-    // FastLED.delay(100/FRAMES_PER_SECOND);
-
-    //if (currentLED <= NUM_LEDS && currentStatusLEDs == 2 && currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
     leds[currentLED] = CRGB::Green;
     leds[currentLED - 1] = CRGB::Green;
@@ -146,7 +104,7 @@ void loop()
     currentLED = 0;
   }
 
-  if (showLEDHinten == true && currentLED2 <= NUM_LEDS && currentMillis - previousMillis2 >= interval) {
+  if (showLEDHinten == true && currentLED2 >= 0 && currentMillis - previousMillis2 >= interval) {
 
     previousMillis2 = currentMillis;
     leds[currentLED2] = CRGB::Blue;
@@ -162,32 +120,50 @@ void loop()
     //delay(100);
     currentLED2--;
   }
-  else if (currentLED2 == 0) {
+  else if (currentLED2 == 3) {
     showLEDHinten = false;
     currentLED2 = 59;
   }
 
 
-
-
-
-  /*if (currentLED >= NUM_LEDS) {
-    currentStatusLEDs = 0;
-    currentLED = 0;
-    previousLEDrun = true;
-    }*/
-
   if (rotateCabin == true && cabinSteps <= 3000) {
-    cabinStep();
-    cabinSteps ++;
-    rotorStep();
+    cabinStep(currentMillis);
+    
+    rotorStep(currentMillis);
   } else {
-    rotorStep();
+    rotorStep(currentMillis);
     rotateCabin = false;
     cabinSteps = 0;
+
+}
+}
+
+
+void rotorStep(unsigned long currentMillis) {
+  if(stepHighRotor == false && currentMillis - previousMillisStepRotor >= interval500){
+  digitalWrite(stepPinRotor, HIGH);
+  previousMillisStepRotor = currentMillis;
+  stepHighRotor = true;
   }
+  else if(stepHighRotor == true && currentMillis - previousMillisStepRotor >= interval500){
+  digitalWrite(stepPinRotor, LOW);
+  previousMillisStepRotor = currentMillis;
+  stepHighRotor = false;
+  } 
+}
 
-
-
+void cabinStep(unsigned long currentMillis) {
+  
+  if(stepHighCabin == false && currentMillis - previousMillisStepCabin >= interval500){
+  digitalWrite(stepPinCabin, HIGH);
+  previousMillisStepCabin = currentMillis;
+  stepHighCabin = true;
+  cabinSteps ++;
+  }
+  if(stepHighCabin == true && currentMillis - previousMillisStepCabin >= interval500){
+  digitalWrite(stepPinCabin, LOW);
+  previousMillisStepCabin = currentMillis;
+  stepHighCabin = false;
+  } 
 }
 
