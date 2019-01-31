@@ -9,12 +9,13 @@ FASTLED_USING_NAMESPACE
 #define DATA_PIN    9
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
-#define NUM_LEDS    60
+#define NUM_LEDS    59
 CRGB leds[NUM_LEDS];
 #define BRIGHTNESS          96
 #define FRAMES_PER_SECOND  120
 int previousLEDrun = false;
 int currentLED = 0;
+int currentLED2= 59;
 
 
 // stepper motors
@@ -29,10 +30,12 @@ const int dirPinCabin = 5;
 int rotateCabin = false; // false standing still, true turning
 int currentStatusLEDs = 0; // 0 off, -1 down, 1 up
 unsigned long previousMillis = 0;
+unsigned long previousMillis2 = 0;
 const long interval = 500;
 
+
 void setup() {
-  delay(3000); // 3 second delay for recovery
+  //delay(3000); // 3 second delay for recovery
   FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
   pinMode(stepPinCabin,OUTPUT); 
@@ -66,19 +69,19 @@ void loop()
   else if (incomingByte == 50) {
 
     //previousLEDrun = true;
-    currentStatusLEDs = 1;
+    currentStatusLEDs = 2;
     Serial.print("2"); 
     //Serial.print(incomingByte);
     // FastLED.show();  
     // FastLED.delay(100/FRAMES_PER_SECOND); 
 
-  if(currentLED <= NUM_LEDS && currentStatusLEDs == 1 && currentMillis - previousMillis >= interval) { 
+  if(currentLED <= NUM_LEDS && currentStatusLEDs == 2 && currentMillis - previousMillis >= interval) { 
             previousMillis = currentMillis;
             leds[currentLED] = CRGB::Red;
             leds[currentLED-1] = CRGB::Green;
             leds[currentLED-2] = CRGB::Black;
             FastLED.show();
-            FastLED.delay(100/FRAMES_PER_SECOND); 
+            //FastLED.delay(100/FRAMES_PER_SECOND); 
             // clear this led for the next time around the loop
             leds[currentLED] = CRGB::Black;
             //delay(100);
@@ -86,11 +89,39 @@ void loop()
             
   }
   }
-    
+
+     else if (incomingByte == 51) {
+      
+  
+    //previousLEDrun = true;
+     currentStatusLEDs = 3;
+     Serial.print("3"); 
+    //Serial.print(incomingByte);
+    // FastLED.show();  
+    // FastLED.delay(100/FRAMES_PER_SECOND); 
+
+  if(currentLED2 <= NUM_LEDS && currentStatusLEDs == 3 && currentMillis - previousMillis2 >= interval) { 
+    Serial.print("Blau");
+            previousMillis2 = currentMillis;
+            leds[currentLED2] = CRGB::Red;
+            leds[currentLED2-1] = CRGB::Blue;
+            leds[currentLED2-2] = CRGB::Green;
+            FastLED.show();
+            //delay(500);
+            //FastLED.delay(100/FRAMES_PER_SECOND); 
+            // clear this led for the next time around the loop
+            Serial.print("WIESO");
+            leds[currentLED2] = CRGB::Black;
+            //delay(100);
+            currentLED2--; 
+
+          
+  }
+  }
     
 
  
-  if (currentLED >= NUM_LEDS) {
+  /*if (currentLED >= NUM_LEDS) {
     currentStatusLEDs = 0;
     currentLED = 0;
     previousLEDrun = true;
@@ -108,7 +139,7 @@ void loop()
   }
  */ 
   // LEDs moving or not
-  if (previousLEDrun && currentMillis - previousMillis >= interval) {
+  /*if (previousLEDrun && currentMillis - previousMillis >= interval) {
     int op = currentMillis - previousMillis;
     Serial.print(">"+currentLED);
     previousMillis = currentMillis;
@@ -117,7 +148,7 @@ void loop()
     // clear this led for the next time around the loop
     leds[1] = CRGB::Black;
     currentLED++;
-  }
+  }*/
  
 }
 
