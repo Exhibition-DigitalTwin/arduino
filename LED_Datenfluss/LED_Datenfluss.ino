@@ -12,11 +12,13 @@ FASTLED_USING_NAMESPACE
 #define NUM_LEDS    60
 CRGB leds[NUM_LEDS];
 int pos = 0;
+int incomingByte = 0;
 
 #define BRIGHTNESS          96
 #define FRAMES_PER_SECOND  120
 
 void setup() {
+
   delay(3000); // 3 second delay for recovery
   
   // tell FastLED about the LED strip configuration
@@ -24,15 +26,37 @@ void setup() {
 
   // set master brightness control
   FastLED.setBrightness(BRIGHTNESS);
+  Serial.begin(9600);
+  Serial.print("Los");
 }
-
 
 
   
 void loop()
 {
 
- // send the 'leds' array out to the actual LED strip
+
+if (Serial.available() > 0) {
+    // read the incoming byte:
+    incomingByte = Serial.read();
+    Serial.print(incomingByte);
+  }
+
+
+if (incomingByte == 49) {
+
+ FastLED.show();  
+  FastLED.delay(100/FRAMES_PER_SECOND); 
+  for(int pos = 1; pos <= NUM_LEDS; pos++) { 
+            leds[pos] = CRGB::Green;
+            FastLED.show();
+            // clear this led for the next time around the loop
+            leds[pos] = CRGB::Black;
+            delay(100);
+}
+
+  
+ /*// send the 'leds' array out to the actual LED strip
   FastLED.show();  
   // insert a delay to keep the framerate modest
   FastLED.delay(100/FRAMES_PER_SECOND); 
@@ -48,8 +72,26 @@ void loop()
     pos = 0;
   }
   pos++;
-  delay(70);
+  delay(70);*/
+  }
+  
+  else if (incomingByte == 50)
+  {
+
+  FastLED.show();  
+  FastLED.delay(100/FRAMES_PER_SECOND); 
+  for(int pos = 60; pos <= NUM_LEDS; pos--) { 
+            leds[pos] = CRGB::Blue;
+            FastLED.show();
+            // clear this led for the next time around the loop
+            leds[pos] = CRGB::Black;
+            delay(100);
+            
 }
+  }
+}
+
+  
 
 
 

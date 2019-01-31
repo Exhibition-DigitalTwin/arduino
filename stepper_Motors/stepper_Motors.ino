@@ -1,4 +1,4 @@
-/*
+
 #include <FastLED.h>
 
 // LEDs
@@ -8,14 +8,14 @@ FASTLED_USING_NAMESPACE
 #endif
 #define DATA_PIN    2
 #define LED_TYPE WS2812B
-#define COLOR_ORDER GRB
+#define COLOR_ORDER RGB
 #define NUM_LEDS    60
 CRGB leds[NUM_LEDS];
 #define BRIGHTNESS          96
 #define FRAMES_PER_SECOND  120
 int previousLEDrun = false;
 int currentLED = 0;
-*/
+
 
 // stepper motors
 int incomingByte = 0;
@@ -40,6 +40,7 @@ void setup() {
   pinMode(stepPinRotor,OUTPUT); 
   pinMode(dirPinRotor,OUTPUT);
   Serial.begin(9600);
+  Serial.print("los");
 
   digitalWrite(dirPinRotor,HIGH);
   digitalWrite(dirPinCabin,HIGH);
@@ -51,16 +52,21 @@ void loop()
   if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.read();
+    Serial.print(incomingByte);
   }
+  
   if (incomingByte == 49) {
     rotateCabin = true;
   }
-  else if (incomingByte != 49) {
-  }
-/*
+  /*else if (incomingByte != 49) {
+    Serial.print("nichts");
+  }*/
+
   else if (incomingByte == 50) {
     currentStatusLEDs = 1;
     previousLEDrun = true;
+    //Serial.print("geht");
+    FastLED.show();
   }
  
   if (currentLED >= NUM_LEDS) {
@@ -68,7 +74,7 @@ void loop()
     currentLED = 0;
     previousLEDrun = true;
   }
-*/
+
   // turning or not
   if (rotateCabin == true && cabinSteps <= 3000) {
     cabinStep();
@@ -79,7 +85,7 @@ void loop()
     rotateCabin = false;
     cabinSteps = 0;
   }
-  /*
+ 
   // LEDs moving or not
   if (previousLEDrun && currentMillis - previousMillis >= interval) {
     int op = currentMillis - previousMillis;
@@ -91,7 +97,7 @@ void loop()
     leds[1] = CRGB::Black;
     currentLED++;
   }
-  */
+ 
 }
 
 void rotorStep(){
