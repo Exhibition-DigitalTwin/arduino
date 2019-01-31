@@ -84,10 +84,12 @@ void loop()
             //FastLED.delay(100/FRAMES_PER_SECOND); 
             // clear this led for the next time around the loop
             leds[currentLED] = CRGB::Black;
+            leds[currentLED-1] = CRGB::Black;
             //delay(100);
             currentLED++;
             
   }
+  currentStatusLEDs = 0;
   }
 
      else if (incomingByte == 51) {
@@ -112,11 +114,14 @@ void loop()
             // clear this led for the next time around the loop
             Serial.print("WIESO");
             leds[currentLED2] = CRGB::Black;
+            leds[currentLED2-1] = CRGB::Black;
+            leds[currentLED2-2] = CRGB::Black;
             //delay(100);
             currentLED2--; 
 
           
   }
+  currentStatusLEDs = 0;
   }
     
 
