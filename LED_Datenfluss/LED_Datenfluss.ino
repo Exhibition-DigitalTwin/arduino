@@ -35,31 +35,47 @@ void setup() {
 void loop()
 {
 
-
 if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.read();
-    Serial.print(incomingByte);
+    //Serial.print(incomingByte);
+   
   }
 
 
 if (incomingByte == 49) {
 
- FastLED.show();  
-  FastLED.delay(100/FRAMES_PER_SECOND); 
-  for(int pos = 1; pos <= NUM_LEDS; pos++) { 
-            leds[pos] = CRGB::Green;
+Serial.print(incomingByte);
+FastLED.show();  
+FastLED.delay(100/FRAMES_PER_SECOND); 
+
+  for(pos = 1; pos <=NUM_LEDS; pos++) { 
+            leds[pos] = CRGB::Red;
+            leds[pos-1] = CRGB::Green;
+            leds[pos-2] = CRGB::Black;
             FastLED.show();
             // clear this led for the next time around the loop
             leds[pos] = CRGB::Black;
             delay(100);
+            
 }
+if (pos=NUM_LEDS){
+  leds[pos] = CRGB::Black;
+  leds[pos-1] = CRGB::Black;
+  }
 
+
+
+//incomingByte=0;
+//leds[NUM_LEDS] = CRGB::Black;
+  }
+            
   
- /*// send the 'leds' array out to the actual LED strip
+/* send the 'leds' array out to the actual LED strip
   FastLED.show();  
   // insert a delay to keep the framerate modest
   FastLED.delay(100/FRAMES_PER_SECOND); 
+ 
   if(pos<NUM_LEDS){
   leds[pos] = CRGB( 200, 200, 200);
   leds[pos-1] = CRGB( 100, 100, 100);
@@ -72,16 +88,21 @@ if (incomingByte == 49) {
     pos = 0;
   }
   pos++;
-  delay(70);*/
+  delay(70);
   }
-  
+  */
+
+
   else if (incomingByte == 50)
   {
 
+  Serial.print(incomingByte);
   FastLED.show();  
   FastLED.delay(100/FRAMES_PER_SECOND); 
-  for(int pos = 60; pos <= NUM_LEDS; pos--) { 
+  for(pos = 60; pos <= NUM_LEDS; pos--) { 
             leds[pos] = CRGB::Blue;
+            leds[pos+1] = CRGB::Blue;
+            leds[pos+2] = CRGB::Black;
             FastLED.show();
             // clear this led for the next time around the loop
             leds[pos] = CRGB::Black;

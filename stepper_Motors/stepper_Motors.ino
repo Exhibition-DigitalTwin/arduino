@@ -6,9 +6,9 @@ FASTLED_USING_NAMESPACE
 #if defined(FASTLED_VERSION) && (FASTLED_VERSION < 3001000)
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
-#define DATA_PIN    2
+#define DATA_PIN    9
 #define LED_TYPE WS2812B
-#define COLOR_ORDER RGB
+#define COLOR_ORDER GRB
 #define NUM_LEDS    60
 CRGB leds[NUM_LEDS];
 #define BRIGHTNESS          96
@@ -29,12 +29,12 @@ const int dirPinCabin = 5;
 int rotateCabin = false; // false standing still, true turning
 int currentStatusLEDs = 0; // 0 off, -1 down, 1 up
 unsigned long previousMillis = 0;
-const long interval = 30;
+const long interval = 500;
 
 void setup() {
   delay(3000); // 3 second delay for recovery
-  //FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  //FastLED.setBrightness(BRIGHTNESS);
+  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.setBrightness(BRIGHTNESS);
   pinMode(stepPinCabin,OUTPUT); 
   pinMode(dirPinCabin,OUTPUT);
   pinMode(stepPinRotor,OUTPUT); 
@@ -52,10 +52,11 @@ void loop()
   if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.read();
-    Serial.print(incomingByte);
+    
   }
   
   if (incomingByte == 49) {
+    Serial.print("1");
     rotateCabin = true;
   }
   /*else if (incomingByte != 49) {
@@ -63,11 +64,31 @@ void loop()
   }*/
 
   else if (incomingByte == 50) {
+
+    //previousLEDrun = true;
     currentStatusLEDs = 1;
-    previousLEDrun = true;
-    //Serial.print("geht");
-    FastLED.show();
+    Serial.print("2"); 
+    //Serial.print(incomingByte);
+    // FastLED.show();  
+    // FastLED.delay(100/FRAMES_PER_SECOND); 
+
+  if(currentLED <= NUM_LEDS && currentStatusLEDs == 1 && currentMillis - previousMillis >= interval) { 
+            previousMillis = currentMillis;
+            leds[currentLED] = CRGB::Red;
+            leds[currentLED-1] = CRGB::Green;
+            leds[currentLED-2] = CRGB::Black;
+            FastLED.show();
+            FastLED.delay(100/FRAMES_PER_SECOND); 
+            // clear this led for the next time around the loop
+            leds[currentLED] = CRGB::Black;
+            //delay(100);
+            currentLED++;
+            
   }
+  }
+    
+    
+
  
   if (currentLED >= NUM_LEDS) {
     currentStatusLEDs = 0;
@@ -76,7 +97,7 @@ void loop()
   }
 
   // turning or not
-  if (rotateCabin == true && cabinSteps <= 3000) {
+ /* if (rotateCabin == true && cabinSteps <= 3000) {
     cabinStep();
     cabinSteps ++;
     rotorStep();
@@ -85,7 +106,7 @@ void loop()
     rotateCabin = false;
     cabinSteps = 0;
   }
- 
+ */ 
   // LEDs moving or not
   if (previousLEDrun && currentMillis - previousMillis >= interval) {
     int op = currentMillis - previousMillis;
