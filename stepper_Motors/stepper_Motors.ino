@@ -14,7 +14,7 @@ CRGB leds[NUM_LEDS];
 #define BRIGHTNESS          96
 #define FRAMES_PER_SECOND  120
 int previousLEDrun = false;
-int currentLED = 0;
+int currentLED = 37;
 int currentLED2 = 59;
 
 
@@ -88,9 +88,8 @@ void loop()
 
   if (showLEDVorne == true && currentLED <= NUM_LEDS && currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-    leds[currentLED] = CRGB::Green;
-    leds[currentLED - 1] = CRGB::Green;
-    leds[currentLED - 2] = CRGB::Black;
+    leds[currentLED] = CRGB::Red;
+    leds[currentLED - 1] = CRGB::Red;
     FastLED.show();
     //FastLED.delay(100/FRAMES_PER_SECOND);
     // clear this led for the next time around the loop
@@ -101,27 +100,43 @@ void loop()
   }
   else if (currentLED == NUM_LEDS) {
     showLEDVorne = false;
-    currentLED = 0;
+    leds[currentLED + 2] = CRGB::Black;
+    leds[currentLED + 1] = CRGB::Black;
+    leds[currentLED] = CRGB::Black;
+    leds[currentLED - 1] = CRGB::Black;
+    leds[currentLED - 2] = CRGB::Black;
+    leds[currentLED - 3] = CRGB::Black;
+    leds[currentLED - 4] = CRGB::Black;
+    leds[currentLED - 5] = CRGB::Black;
+    FastLED.show();
+    currentLED = 37;
   }
 
-  if (showLEDHinten == true && currentLED2 >= 0 && currentMillis - previousMillis2 >= interval) {
+  if (showLEDHinten == true && currentLED2 >= 37 && currentMillis - previousMillis2 >= interval) {
 
     previousMillis2 = currentMillis;
-    leds[currentLED2] = CRGB::Blue;
-    leds[currentLED2 - 1] = CRGB::Blue;
-    leds[currentLED2 - 2] = CRGB::Green;
+    leds[currentLED2] = CRGB::Red;
+    leds[currentLED2 - 1] = CRGB::Red;
     FastLED.show();
     //delay(500);
     //FastLED.delay(100/FRAMES_PER_SECOND);
     // clear this led for the next time around the loop
     leds[currentLED2] = CRGB::Black;
     leds[currentLED2 - 1] = CRGB::Black;
-    leds[currentLED2 - 2] = CRGB::Black;
     //delay(100);
     currentLED2--;
   }
   else if (currentLED2 == 3) {
     showLEDHinten = false;
+     leds[currentLED + 2] = CRGB::Black;
+    leds[currentLED + 1] = CRGB::Black;
+    leds[currentLED] = CRGB::Black;
+    leds[currentLED - 1] = CRGB::Black;
+    leds[currentLED - 2] = CRGB::Black;
+    leds[currentLED - 3] = CRGB::Black;
+    leds[currentLED - 4] = CRGB::Black;
+    leds[currentLED - 5] = CRGB::Black;
+    FastLED.show();
     currentLED2 = 59;
   }
 
